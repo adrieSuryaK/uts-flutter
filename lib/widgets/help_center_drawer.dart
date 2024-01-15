@@ -47,16 +47,10 @@ class HelpCenterDrawer extends StatelessWidget {
                     child: Text(
                       'Help Center',
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 3,
-                              color: Colors.black,
-                              offset: Offset(1, 1),
-                            )
-                          ]),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        color: Colors.black,
+                      ),
                     ),
                   )
                 ],

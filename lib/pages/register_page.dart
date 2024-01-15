@@ -313,7 +313,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _uploadDataToServer() async {
-    String serverUrl = 'http://192.168.1.5:3000/users';
+    String serverUrl = 'http://192.168.1.7:3005/users';
 
     var request = http.MultipartRequest('POST', Uri.parse(serverUrl));
     request.fields['name'] = nameController.text;

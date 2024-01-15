@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'dart:async'; //delayed
+import 'package:uts_flutter/widgets/user_controller.dart';
 
 class ItemProfil extends StatefulWidget {
   @override
@@ -27,7 +28,7 @@ class _ItemProfilState extends State<ItemProfil> {
   void initState() {
     super.initState();
     fetchUserData();
-    originalPhotoURL = 'http://192.168.1.5:3000/images/${userData['photo']}';
+    originalPhotoURL = 'http://192.168.1.7:3005/images/${userData['photo']}';
   }
 
   Future<void> fetchUserData() async {
@@ -36,7 +37,7 @@ class _ItemProfilState extends State<ItemProfil> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.5:3000/users/$username'),
+        Uri.parse('http://192.168.1.7:3005/users/$username'),
       );
 
       if (response.statusCode == 200) {
@@ -78,7 +79,7 @@ class _ItemProfilState extends State<ItemProfil> {
 
   Future<void> _updateUserData() async {
     String userId = userData['id'].toString();
-    String serverUrl = 'http://192.168.1.5:3000/users/$userId';
+    String serverUrl = 'http://192.168.1.7:3005/users/$userId';
 
     var request = http.MultipartRequest('PUT', Uri.parse(serverUrl));
     request.fields['name'] = nameControl.text;
@@ -116,6 +117,14 @@ class _ItemProfilState extends State<ItemProfil> {
     }
   }
 
+  Future<void> _logout() async {
+    await UserController.signOut();
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    // Navigate n remove route
+    Navigator.pushNamedAndRemoveUntil(context, 'Login', (route) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -130,7 +139,7 @@ class _ItemProfilState extends State<ItemProfil> {
                     backgroundImage: isImageChanged
                         ? FileImage(File(userData['photo']))
                         : NetworkImage(
-                            'http://192.168.1.5:3000/images/${userData['photo']}',
+                            'http://192.168.1.7:3005/images/${userData['photo']}',
                           ) as ImageProvider,
                   ),
             Positioned(
@@ -138,7 +147,7 @@ class _ItemProfilState extends State<ItemProfil> {
               right: -5,
               child: IconButton(
                 icon: Icon(Icons.camera_alt_rounded),
-                color: Colors.white,
+                color: Color.fromARGB(248, 212, 81, 0),
                 onPressed: _pickImageFromGallery,
               ),
             ),
@@ -153,29 +162,88 @@ class _ItemProfilState extends State<ItemProfil> {
         buildCard("Email", Icons.email_rounded, emailController),
         buildCard("Handphone", Icons.phone_rounded, handphoneController),
         SizedBox(height: 20),
-        ElevatedButton.icon(
-          onPressed: _updateUserData,
-          icon: Icon(Icons.save_as_rounded),
-          label: Text(
-            "Save",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(
-              Color.fromARGB(248, 212, 81, 0),
-            ),
-            padding: MaterialStateProperty.all(
-              EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-            ),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: _updateUserData,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromARGB(248, 137, 87, 33),
+                        Color.fromARGB(248, 205, 161, 85),
+                        Color.fromARGB(248, 218, 149, 30),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+                  child: Text(
+                    'Save',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                style: ButtonStyle(
+                  elevation: MaterialStateProperty.all(0.0),
+                  backgroundColor:
+                      MaterialStateProperty.all(Colors.transparent),
+                  overlayColor: MaterialStateProperty.all(Colors.transparent),
+                  padding: MaterialStateProperty.all(
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  ),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                ),
               ),
-            ),
+              ElevatedButton(
+                onPressed: _logout,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromARGB(248, 137, 87, 33),
+                        Color.fromARGB(248, 205, 161, 85),
+                        Color.fromARGB(248, 218, 149, 30),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                style: ButtonStyle(
+                  elevation: MaterialStateProperty.all(0.0),
+                  backgroundColor:
+                      MaterialStateProperty.all(Colors.transparent),
+                  overlayColor: MaterialStateProperty.all(Colors.transparent),
+                  padding: MaterialStateProperty.all(
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  ),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -184,33 +252,32 @@ class _ItemProfilState extends State<ItemProfil> {
 
   Widget buildCard(
       String label, IconData icon, TextEditingController controller) {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white38,
+        borderRadius: BorderRadius.circular(10.0),
       ),
-      color: Colors.white30,
       child: Padding(
-        padding: const EdgeInsets.all(30),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
         child: Column(
           children: [
             ListTile(
               leading: Icon(icon),
-              iconColor: Colors.white,
+              iconColor: Color.fromARGB(248, 212, 81, 0),
               title: Text(
                 label,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black,
                   fontSize: 18,
-                  shadows: <Shadow>[
-                    Shadow(
-                      offset: Offset(0, 1),
-                      blurRadius: 1,
-                      color: Colors.black,
-                    ),
-                  ],
+                  // shadows: <Shadow>[
+                  //   Shadow(
+                  //     offset: Offset(0, 1),
+                  //     blurRadius: 1,
+                  //     color: Colors.black,
+                  //   ),
+                  // ],
                 ),
               ),
             ),
@@ -230,6 +297,7 @@ class _ItemProfilState extends State<ItemProfil> {
                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
               ),
             ),
+            SizedBox(height: 20),
           ],
         ),
       ),

@@ -9,13 +9,13 @@ class setsPage extends StatelessWidget {
         title: Text(
           'Edit Profile',
           style: TextStyle(
-              color: Color.fromARGB(255, 246, 78, 56),
+              color: Color.fromARGB(248, 212, 81, 0),
               fontSize: 23,
               fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
-        elevation: 0,
+        // elevation: 0,
         toolbarHeight: 70,
       ),
       body: SingleChildScrollView(
@@ -36,10 +36,10 @@ class setsPage extends StatelessWidget {
                   ],
                   tileMode: TileMode.mirror,
                 ),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(35),
-                  topRight: Radius.circular(35),
-                ),
+                // borderRadius: BorderRadius.only(
+                //   topLeft: Radius.circular(35),
+                //   topRight: Radius.circular(35),
+                // ),
               ),
               child: Column(
                 children: [

@@ -6,6 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:uts_flutter/widgets/user_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dio/dio.dart';
+import 'package:uts_flutter/pages/homepage.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:uts_flutter/pages/splash_screen.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -22,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
       BuildContext context, String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/login'),
+        Uri.parse('http://10.0.2.2:3005/login'),
         body: {
           'username': username,
           'password': password,
@@ -30,13 +33,23 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (response.statusCode == 200) {
+        try {
+          await FirebaseAppCheck.instance.getToken(true);
+        } catch (e) {
+          print('Error resetting App Check token: $e');
+        }
         saveUsername(username);
         savePassword(password);
         print('username');
         print(username);
         print('password');
         print(password);
-        Navigator.pushNamed(context, 'Home');
+        // Navigator.pushReplacementNamed(context, 'Home');
+        if (username.toLowerCase() == 'admin') {
+          Navigator.pushReplacementNamed(context, 'Home Admin');
+        } else {
+          Navigator.pushReplacementNamed(context, 'Home');
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
@@ -102,10 +115,13 @@ class _LoginPageState extends State<LoginPage> {
                 Stack(
                   alignment: Alignment.center,
                   children: <Widget>[
-                    Container(
-                      width: 300,
-                      height: 180,
-                      child: Lottie.asset('assets/images/ramenaruto.json'),
+                    Hero(
+                      tag: 'lottie_hero_tag',
+                      child: Container(
+                        width: 300,
+                        height: 180,
+                        child: Lottie.asset('assets/images/ramenaruto.json'),
+                      ),
                     ),
                     Positioned(
                       right: 95,
@@ -316,7 +332,7 @@ class _LoginPageState extends State<LoginPage> {
                                 photo,
                                 handphoneFromGoogle);
 
-                            Navigator.pushNamed(context, 'Home');
+                            Navigator.pushReplacementNamed(context, 'Home');
                           }
                           ;
                         } on FirebaseAuthException catch (error) {
@@ -401,7 +417,7 @@ Future<void> postUserData(
       final photoBytes = response.data;
 
       var request = http.MultipartRequest(
-          'POST', Uri.parse('http://192.168.1.5:3000/users'));
+          'POST', Uri.parse('http://192.168.1.7:3005/users'));
       request.fields['name'] = nameFromGoogle;
       request.fields['email'] = emailFromGoogle;
       request.fields['username'] = username;

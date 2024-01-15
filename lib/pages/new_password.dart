@@ -127,7 +127,7 @@ class NewPassword extends StatelessWidget {
                         if (newPassword.isNotEmpty &&
                             newPassword == confirmPassword) {
                           final url = Uri.parse(
-                              'http://192.168.1.5:3000/users/resetpass/$userId');
+                              'http://192.168.1.7:3005/users/resetpass/$userId');
                           final response = await http.put(
                             url,
                             body: jsonEncode({'password': newPassword}),

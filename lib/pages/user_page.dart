@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uts_flutter/pages/homepage.dart';
+import 'package:uts_flutter/pages/homepage_admin.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -28,7 +29,7 @@ class _UserPageState extends State<UserPage> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.5:3000/users/$username'),
+        Uri.parse('http://192.168.1.7:3005/users/$username'),
       );
 
       if (response.statusCode == 200) {
@@ -59,7 +60,7 @@ class _UserPageState extends State<UserPage> {
         ),
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
-        elevation: 0,
+        // elevation: 0,
         toolbarHeight: 70,
         actions: <Widget>[
           Padding(
@@ -92,10 +93,10 @@ class _UserPageState extends State<UserPage> {
               ],
               tileMode: TileMode.mirror,
             ),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(35),
-              topRight: Radius.circular(35),
-            ),
+            // borderRadius: BorderRadius.only(
+            //   topLeft: Radius.circular(35),
+            //   topRight: Radius.circular(35),
+            // ),
           ),
           child: userData.isEmpty
               ? CircularProgressIndicator() // Loading
@@ -105,7 +106,7 @@ class _UserPageState extends State<UserPage> {
                     CircleAvatar(
                       radius: 50,
                       backgroundImage: NetworkImage(
-                        'http://192.168.1.5:3000/images/${userData['photo']}',
+                        'http://192.168.1.7:3005/images/${userData['photo']}',
                       ),
                     ),
                     Container(
@@ -122,40 +123,70 @@ class _UserPageState extends State<UserPage> {
         ),
       ),
       bottomNavigationBar: CurvedNavigationBar(
-        onTap: (index) {
+        onTap: (index) async {
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          final username = prefs.getString('username') ?? "";
+
           switch (index) {
             case 0:
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) {
-                    return HomePage();
-                  },
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    const begin = Offset(1.0, 0.0);
-                    const end = Offset.zero;
-                    const curve = Curves.easeInOut;
+              if (username.toLowerCase() == 'admin') {
+                Navigator.pushReplacement(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) {
+                      return HomePageAdmin();
+                    },
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(1.0, 0.0);
+                      const end = Offset.zero;
+                      const curve = Curves.easeInOut;
 
-                    var tween = Tween(begin: begin, end: end)
-                        .chain(CurveTween(curve: curve));
-                    var offsetAnimation = animation.drive(tween);
+                      var tween = Tween(begin: begin, end: end)
+                          .chain(CurveTween(curve: curve));
+                      var offsetAnimation = animation.drive(tween);
 
-                    return SlideTransition(
-                      position: offsetAnimation,
-                      child: child,
-                    );
-                  },
-                ),
-              );
+                      return SlideTransition(
+                        position: offsetAnimation,
+                        child: child,
+                      );
+                    },
+                  ),
+                );
+              } else {
+                Navigator.pushReplacement(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) {
+                      return HomePage();
+                    },
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(1.0, 0.0);
+                      const end = Offset.zero;
+                      const curve = Curves.easeInOut;
+
+                      var tween = Tween(begin: begin, end: end)
+                          .chain(CurveTween(curve: curve));
+                      var offsetAnimation = animation.drive(tween);
+
+                      return SlideTransition(
+                        position: offsetAnimation,
+                        child: child,
+                      );
+                    },
+                  ),
+                );
+              }
               break;
+
             case 1:
               //
               break;
           }
         },
         height: 70,
-        backgroundColor: Color.fromARGB(249, 255, 234, 127),
+        backgroundColor: Colors.white,
         color: Color.fromARGB(248, 138, 73, 3),
         buttonBackgroundColor: Color.fromARGB(248, 212, 81, 0),
         items: [
@@ -187,7 +218,7 @@ class _UserPageState extends State<UserPage> {
         margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.white30,
+          color: Colors.white38,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(

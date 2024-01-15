@@ -30,7 +30,7 @@ class _ItemProfilState extends State<ItemProfil> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.5:3000/users/$username'),
+        Uri.parse('http://192.168.1.7:3005/users/$username'),
       );
 
       if (response.statusCode == 200) {
@@ -70,7 +70,7 @@ class _ItemProfilState extends State<ItemProfil> {
                 : CircleAvatar(
                     radius: 50,
                     backgroundImage: NetworkImage(
-                      'http://192.168.1.5:3000/images/${userData['photo']}',
+                      'http://192.168.1.7:3005/images/${userData['photo']}',
                     ),
                   ),
             Positioned(
